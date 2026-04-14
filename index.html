@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tabu Ultra</title>
+    <link rel="stylesheet" href="style-game.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://unpkg.com/@discord/embedded-app-sdk"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="screen-login" class="screen active">
+            <input id="login-name-input" type="text" placeholder="İSMİNİ YAZ" maxlength="15">
+            <div id="btn-create-room" class="hitbox" onclick="NET.createRoom()"></div>
+        </div>
+
+        <div id="screen-lobby" class="screen">
+            <div id="room-link-display"></div>
+            <select id="select-time">
+                <option value="60">60s</option>
+                <option value="90">90s</option>
+            </select>
+            <select id="select-theme"></select>
+            <div id="btn-start-game" class="hitbox" onclick="ENGINE.startGame()"></div>
+            
+            <div id="slot-anlat-blue" class="slot" onclick="NET.joinRole('blue', 'anlatici')"></div>
+            <div id="slot-dinle-blue" class="slot" onclick="NET.joinRole('blue', 'dinleyici')"></div>
+            <div id="slot-anlat-red" class="slot" onclick="NET.joinRole('red', 'anlatici')"></div>
+            <div id="slot-dinle-red" class="slot" onclick="NET.joinRole('red', 'dinleyici')"></div>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div id="word-main"></div>
+            <div id="word-forbidden"></div>
+            <div id="guess-container" style="display:none;">
+                <input id="guess-entry" type="text" placeholder="TAHMİN YAZ..." onkeypress="if(event.key==='Enter') ENGINE.submitGuess()">
+            </div>
+            <div id="btn-claim-leader" class="hitbox" onclick="ENGINE.claimLeader()"></div>
+        </div>
+
+        <div id="tabu-x-overlay" class="tabu-x-overlay">
+            <div class="tabu-x-text">X</div>
+        </div>
+    </div>
+
+    <script src="network-core.js"></script>
+    <script src="discord-logic.js"></script>
+    <script src="game-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body, html { width: 100%; height: 100%; overflow: hidden; background: #000; display: flex; justify-content: center; }
+
+#app {
+    position: relative; width: 100vw; height: 100vh;
+    max-width: 500px; overflow: hidden;
+}
+
+.screen {
+    position: absolute; width: 100%; height: 100%;
+    background-size: 100% 100%; background-repeat: no-repeat;
+    display: none;
+}
+.active { display: flex; }
+
+/* PNG ve Küçük Harf Görseller */
+#screen-login { background-image: url('bg-login.png'); }
+#screen-lobby { background-image: url('bg-lobby.png'); }
+
+.hitbox { position: absolute; cursor: pointer; background: transparent; }
+
+/* Koordinatlar */
+#login-name-input { position: absolute; top: 62%; left: 13%; width: 74%; height: 15%; background: transparent; border: none; color: #fff; text-align: center; font-size: 1.5rem; outline: none; }
+#btn-create-room { top: 86%; left: 26%; width: 48%; height: 7%; }
+#btn-start-game { bottom: 8%; left: 35%; width: 30%; height: 8%; }
+
+#word-main { position: absolute; top: 32%; left: 50%; transform: translateX(-50%); color: #fff; font-size: 2.5rem; font-weight: bold; }
+#word-forbidden { position: absolute; top: 58%; left: 50%; transform: translateX(-50%); color: #ddd; font-size: 1.3rem; text-align: center; line-height: 1.8; }
+
+/* Çarpı Efekti */
+.tabu-x-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 999; }
+.tabu-x-overlay.show { display: flex; }
+.tabu-x-text { color: red; font-size: 250px; font-weight: 900; }
