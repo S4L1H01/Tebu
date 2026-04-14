@@ -1,36 +1,28 @@
 // [cite: 2026-04-14]
-const discordSdk = new window.DiscordSDK.DiscordSDK("1493662242862923806");
+const DISCORD_CLIENT_ID = "1493662242862923806";
+const discordSdk = new window.DiscordSDK.DiscordSDK(DISCORD_CLIENT_ID);
 
-async function setupDiscord() {
+async function startDiscord() {
     try {
         await discordSdk.ready();
-        
-        // Discord üzerinden yetkilendirme başlatılıyor
         const { code } = await discordSdk.commands.authorize({
-            client_id: "1493662242862923806",
+            client_id: DISCORD_CLIENT_ID,
             response_type: "code",
-            scope: ["identify", "rpc.activities.write"],
-            prompt: "none",
+            scope: ["identify"],
+            prompt: "none"
         });
-
-        // Kullanıcı bilgilerini Discord'dan çekip giriş kutusuna otomatik yazalım
-        const response = await fetch(`https://discord.com/api/v10/users/@me`, {
-            headers: {
-                Authorization: `Bearer ${code}`,
-            },
-        });
-        const userData = await response.json();
         
-        if (userData.username) {
-            const nameInput = document.getElementById('login-name-input');
-            if(nameInput) nameInput.value = userData.username;
-            console.log("Discord kullanıcısı bağlandı:", userData.username);
-        }
-
-    } catch (error) {
-        console.warn("Discord SDK yüklenemedi, tarayıcı modunda devam ediliyor.");
+        // Kullanıcı adını otomatik al ve inputa yaz
+        const response = await fetch(`https://discord.com/api/v10/users/@me`, {
+            headers: { Authorization: `Bearer ${code}` }
+        });
+        const user = await response.json();
+        if (user.username) document.getElementById('login-name-input').value = user.username;
+        
+        NET.isDiscord = true;
+    } catch (e) {
+        console.log("Tarayıcı modunda çalışıyor...");
+        NET.isDiscord = false;
     }
 }
-
-// Uygulama başladığında Discord'u hazırla
-setupDiscord();
+startDiscord();

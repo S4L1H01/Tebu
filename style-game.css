@@ -1,49 +1,20 @@
 /* [cite: 2026-04-14] */
-:root { --mavi: #00f3ff; --kirmizi: #ff003c; }
-
-/* Telefon Formatı Sabitleme */
-body, html { 
-    margin: 0; padding: 0; width: 100%; height: 100%; 
-    overflow: hidden; background: #000;
-    display: flex; justify-content: center; align-items: center;
+#app { 
+    width: 100vw; height: 100vh; max-width: 500px; 
+    position: relative; overflow: hidden; background: #000;
 }
-
-#app-container {
-    width: 100vw; height: 100vh;
-    max-width: 500px; /* Telefon oranı */
-    position: relative;
-    background-color: #111;
-}
-
-.screen {
-    position: absolute; width: 100%; height: 100%;
-    background-size: 100% 100%; background-repeat: no-repeat;
-    display: none;
+.screen { 
+    position: absolute; width: 100%; height: 100%; 
+    background-size: 100% 100%; display: none; 
 }
 .active { display: block; }
 
-/* --- LOBİ YERLEŞİMİ (Kırmızı Yazılara Göre) --- */
-.lobby-btn { position: absolute; cursor: pointer; border: none; background: transparent; color: white; font-weight: bold; }
+/* Görsel Üzerindeki Dokunmatik Alanlar (Hitbox) */
+.hitbox { position: absolute; cursor: pointer; opacity: 0; }
 
-/* Oda Kodu & Link (Sol Alt) */
-#lobby-link-area { position: absolute; bottom: 12%; left: 8%; width: 35%; height: 6%; font-size: 0.7rem; color: var(--mavi); display: flex; align-items: center; }
-
-/* Süre Seçimi (Orta) */
-#select-time { position: absolute; top: 41%; left: 45%; width: 12%; height: 4%; background: #000; color: #fff; border: 1px solid var(--mavi); }
-
-/* Tema Seçimi (Sağ) */
-#select-theme { position: absolute; top: 41%; right: 10%; width: 25%; height: 4%; background: #000; color: #fff; border: 1px solid var(--kirmizi); }
-
-/* Başlat Butonu (Orta Alt) */
-#btn-start-final { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); width: 25%; height: 8%; z-index: 10; cursor: pointer; }
-
-/* --- OYUN EKRANI (Kırmızı Yazılara Göre) --- */
-#word-box { position: absolute; top: 32%; left: 50%; transform: translate(-50%, -50%); width: 70%; text-align: center; }
-#main-word { font-size: 2.2rem; color: #fff; text-shadow: 0 0 10px var(--mavi); }
-
-#forbidden-box { position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%); width: 60%; display: flex; flex-direction: column; gap: 12px; text-align: center; }
-.forb-word { font-size: 1.2rem; color: #ddd; letter-spacing: 1px; }
-
-/* Tahmin Alanı (Dinleyici Lideri) */
-#leader-input-container { position: absolute; bottom: 24%; left: 50%; transform: translateX(-50%); width: 60%; height: 6%; display: none; }
-#guess-entry { width: 100%; height: 100%; background: rgba(0,0,0,0.7); border: 2px solid var(--mavi); color: white; text-align: center; border-radius: 5px; }
+#btn-create-room { top: 86%; left: 26%; width: 48%; height: 7%; }
+#btn-start-game { bottom: 8%; left: 35%; width: 30%; height: 8%; }
+#login-name-input { 
+    position: absolute; top: 62%; left: 13%; width: 74%; height: 15%; 
+    background: transparent; border: none; color: white; text-align: center; font-size: 1.5rem;
+}
