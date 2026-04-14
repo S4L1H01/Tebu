@@ -1,16 +1,18 @@
+// [cite: 2026-04-14]
 const FIREBASE_CONFIG = {
-    apiKey: "YOUR_API_KEY", // Firebase'den al
-    databaseURL: "https://your-db-url.firebaseio.com"
+    apiKey: "BURAYA_KENDI_KEYINI_YAPISTIR", 
+    databaseURL: "https://tabu-ultra-default-rtdb.firebaseio.com"
 };
 
 const NET = {
-    db: null, roomRef: null, myId: null,
+    isDiscord: false, db: null, roomRef: null, myId: null,
     async init() {
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         this.db = firebase.database();
         this.myId = localStorage.getItem('tabu_uid') || Math.random().toString(36).substring(2, 10);
         localStorage.setItem('tabu_uid', this.myId);
-
+        
+        this.isDiscord = window.location.href.includes("discord");
         const params = new URLSearchParams(window.location.search);
         if (params.get('room')) this.joinRoom(params.get('room'));
     },
@@ -20,7 +22,7 @@ const NET = {
     },
     joinRoom(code) {
         this.roomRef = this.db.ref('rooms/' + code);
-        this.roomRef.on('value', snap => ENGINE.update(snap.val()));
+        this.roomRef.on('value', snap => { if(snap.exists()) ENGINE.update(snap.val()); });
         document.getElementById('screen-login').classList.remove('active');
         document.getElementById('screen-lobby').classList.add('active');
     }
