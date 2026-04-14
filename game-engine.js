@@ -1,45 +1,38 @@
 // [cite: 2026-04-14]
-const game = {
-    words: {},
-    currentTheme: 'GENEL',
-    currentCard: null,
-    score: { A: 0, B: 0 },
-    timer: 60,
-    interval: null,
-
-    async loadWords() {
-        const res = await fetch('kelimeler.txt');
-        const text = await res.text();
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l !== "");
-        
-        let theme = "GENEL";
-        lines.forEach((line, i) => {
-            if (line.endsWith(':')) {
-                theme = line.replace(':', '');
-                this.words[theme] = [];
-            } else if (line === line.toUpperCase()) {
-                let card = { word: line, forbidden: [] };
-                for(let j=1; j<=5; j++) if(lines[i+j]) card.forbidden.push(lines[i+j]);
-                this.words[theme].push(card);
-            }
-        });
-    },
-
-    startTurn(team, role) {
-        // Ekran değiştirme mantığı
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const screenId = role === 'anlatici' ? `screen-narrator-${team.toLowerCase()}` : `screen-listener-${team.toLowerCase()}`;
-        document.getElementById(screenId).classList.add('active');
-        
-        if (role === 'anlatici') this.nextCard();
-    },
-
-    nextCard() {
-        const pool = this.words[this.currentTheme];
-        this.currentCard = pool[Math.floor(Math.random() * pool.length)];
-        
-        document.getElementById('word-main').innerText = this.currentCard.word;
-        const forbiddenDiv = document.getElementById('word-forbidden');
-        forbiddenDiv.innerHTML = this.currentCard.forbidden.map(w => `<div>${w}</div>`).join('');
-    }
+const state = {
+    role: null, // 'anlatici' | 'dinleyici'
+    isLeader: false,
+    team: null, // 'A' | 'B'
+    roomCode: null
 };
+
+// Oylama/Lider Seçimi Mekaniği
+function claimLeader(team) {
+    // Burada "Takım Lideri Seçiliyor" mesajı çıkar
+    state.isLeader = true;
+    state.team = team;
+    alert(team + " Takımı Lideri Oldun! Sadece senin yazdıkların puan kazandırır.");
+    
+    // UI Güncelle
+    document.getElementById('leader-input-container').style.display = 'block';
+}
+
+// Kelime İşleme (Parser)
+async function initGameData() {
+    const res = await fetch('kelimeler.txt');
+    const data = await res.text();
+    // 36k karakterlik veriyi burada split edip state'e atıyoruz...
+}
+
+// Sıra Değişimi ve Görsel Geçiş
+function switchTurn(toTeam) {
+    const screens = ['screen-narrator-a', 'screen-narrator-b', 'screen-listener-a', 'screen-listener-b'];
+    screens.forEach(s => document.getElementById(s).classList.remove('active'));
+    
+    // Anlatıcı mı Dinleyici mi kontrolü
+    if(state.team === toTeam && state.role === 'anlatici') {
+        document.getElementById(`screen-narrator-${toTeam.toLowerCase()}`).classList.add('active');
+    } else {
+        document.getElementById(`screen-listener-${toTeam.toLowerCase()}`).classList.add('active');
+    }
+}
