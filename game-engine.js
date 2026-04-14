@@ -1,50 +1,45 @@
 // [cite: 2026-04-14]
-const engine = {
+const game = {
+    words: {},
+    currentTheme: 'GENEL',
     currentCard: null,
-    scoreA: 0,
-    scoreB: 0,
-    currentTurn: 'A', // Başlangıç takımı
-    isLeader: false,
+    score: { A: 0, B: 0 },
+    timer: 60,
+    interval: null,
 
-    // Sadece Dinleyici Lideri'nin klavyesi çalışır
-    setupInput() {
-        const input = document.getElementById('tahmin-input');
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && this.isLeader) {
-                this.checkGuess(input.value);
-                input.value = '';
+    async loadWords() {
+        const res = await fetch('kelimeler.txt');
+        const text = await res.text();
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l !== "");
+        
+        let theme = "GENEL";
+        lines.forEach((line, i) => {
+            if (line.endsWith(':')) {
+                theme = line.replace(':', '');
+                this.words[theme] = [];
+            } else if (line === line.toUpperCase()) {
+                let card = { word: line, forbidden: [] };
+                for(let j=1; j<=5; j++) if(lines[i+j]) card.forbidden.push(lines[i+j]);
+                this.words[theme].push(card);
             }
         });
     },
 
-    checkGuess(val) {
-        if (!this.currentCard) return;
+    startTurn(team, role) {
+        // Ekran değiştirme mantığı
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const screenId = role === 'anlatici' ? `screen-narrator-${team.toLowerCase()}` : `screen-listener-${team.toLowerCase()}`;
+        document.getElementById(screenId).classList.add('active');
         
-        // Küçük/Büyük harf ve boşluk duyarlılığını kaldır
-        const guess = val.trim().toLowerCase();
-        const correct = this.currentCard.word.toLowerCase();
-
-        if (guess === correct) {
-            this.handleCorrect();
-        }
+        if (role === 'anlatici') this.nextCard();
     },
 
-    handleCorrect() {
-        if (this.currentTurn === 'A') this.scoreA++;
-        else this.scoreB++;
+    nextCard() {
+        const pool = this.words[this.currentTheme];
+        this.currentCard = pool[Math.floor(Math.random() * pool.length)];
         
-        this.playSfx('correct');
-        this.nextCard();
-        this.syncScores();
-    },
-
-    handleWrong() {
-        // Tabu butonu sadece Anlatıcıda çalışır
-        if (this.currentTurn === 'A') this.scoreA--;
-        else this.scoreB--;
-        
-        this.playSfx('tabu');
-        this.nextCard();
-        this.syncScores();
+        document.getElementById('word-main').innerText = this.currentCard.word;
+        const forbiddenDiv = document.getElementById('word-forbidden');
+        forbiddenDiv.innerHTML = this.currentCard.forbidden.map(w => `<div>${w}</div>`).join('');
     }
 };

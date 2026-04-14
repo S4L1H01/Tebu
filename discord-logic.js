@@ -1,28 +1,36 @@
-// [cite: 2026-04-12]
-// Bu kısım Client ID gerektirir, lobiye isim girmeyi stabil yapar.
-const discordSdk = new window.DiscordSDK.DiscordSDK("SENIN_CLIENT_ID");
+// [cite: 2026-04-14]
+const discordSdk = new window.DiscordSDK.DiscordSDK("1493662242862923806");
 
 async function setupDiscord() {
     try {
         await discordSdk.ready();
+        
+        // Discord üzerinden yetkilendirme başlatılıyor
         const { code } = await discordSdk.commands.authorize({
-            client_id: "SENIN_CLIENT_ID",
-            response_type: "code", scope: ["identify", "rpc.activities.write"],
+            client_id: "1493662242862923806",
+            response_type: "code",
+            scope: ["identify", "rpc.activities.write"],
             prompt: "none",
         });
+
+        // Kullanıcı bilgilerini Discord'dan çekip giriş kutusuna otomatik yazalım
+        const response = await fetch(`https://discord.com/api/v10/users/@me`, {
+            headers: {
+                Authorization: `Bearer ${code}`,
+            },
+        });
+        const userData = await response.json();
         
-        // Discord ismini alıp giriş kutusuna yaz (hayal gücü)
-        const user = await fetch(`https://discord.com/api/v10/users/@me`, {
-            headers: { Authorization: `Bearer ${code}` }
-        }).then(r => r.json());
-        
-        if(user && user.username) {
-            document.getElementById('username').value = user.username;
-            app.isDiscordActive = true;
+        if (userData.username) {
+            const nameInput = document.getElementById('login-name-input');
+            if(nameInput) nameInput.value = userData.username;
+            console.log("Discord kullanıcısı bağlandı:", userData.username);
         }
-    } catch (e) {
-        console.log("Tarayıcı modunda çalışılıyor.");
+
+    } catch (error) {
+        console.warn("Discord SDK yüklenemedi, tarayıcı modunda devam ediliyor.");
     }
 }
 
-// setupDiscord(); // Daha sonra aktif edilecek
+// Uygulama başladığında Discord'u hazırla
+setupDiscord();
