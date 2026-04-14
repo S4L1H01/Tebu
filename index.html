@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Tabu Ultra - Link ile Katıl</title>
+    <script src="https://unpkg.com/@discord/embedded-app-sdk"></script>
+    <link rel="stylesheet" href="style-core.css">
+    <link rel="stylesheet" href="style-lobby.css">
+    <link rel="stylesheet" href="style-game.css">
+</head>
+<body>
+    <div id="app">
+        <section id="screen-login" class="screen active">
+            <div class="main-titles">
+                <h1 class="glitch" data-text="TABU ULTRA">TABU ULTRA</h1>
+                <p>Sesli Konuşma: Discord (Lobi: Site)</p>
+            </div>
+            <div class="login-box">
+                <input type="text" id="username" placeholder="İSMİNİ GİR (Zorunlu)" maxlength="15">
+                <div class="login-buttons">
+                    <button id="btn-create" class="btn-neon" onclick="app.createRoom()">ODA KUR</button>
+                    <button id="btn-join-panel" class="btn-outline" onclick="ui.toggleJoinPanel()">ODAYA KATIL</button>
+                </div>
+                <div id="join-panel" class="hidden">
+                    <input type="text" id="join-code" placeholder="ODA KODU">
+                    <button class="btn-neon-small" onclick="app.joinRoomByCode()">KATIL</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-lobby" class="screen">
+            <div class="lobby-layout">
+                <div class="team-panel team-a">
+                    <h2>MAVİ TAKIM</h2>
+                    <div class="role-slots">
+                        <div class="slot-group">
+                            <h3>ANLATICI</h3>
+                            <div id="lobby-narrator-a" class="player-list"></div>
+                            <button class="btn-slot" onclick="net.selectRole('A', 'narrator')">GEÇ</button>
+                        </div>
+                        <div class="slot-group">
+                            <h3>DİNLEYİCİLER</h3>
+                            <div id="lobby-listeners-a" class="player-list"></div>
+                            <div class="leader-controls">
+                                <button class="btn-slot" onclick="net.selectRole('A', 'listener')">GEÇ</button>
+                                <button class="btn-leader" onclick="net.claimLeader('A')">LİDER OL</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lobby-settings">
+                    <div class="setting-box">
+                        <label>SÜRE:</label>
+                        <select id="opt-time">
+                            <option value="30">30 Saniye</option>
+                            <option value="60" selected>60 Saniye</option>
+                            <option value="90">90 Saniye</option>
+                            <option value="120">120 Saniye</option>
+                            <option value="150">150 Saniye</option>
+                            <option value="180">180 Saniye</option>
+                        </select>
+                    </div>
+                    <div class="setting-box">
+                        <label>TEMA:</label>
+                        <select id="opt-theme">
+                            </select>
+                    </div>
+                    <div class="setting-box">
+                        <label>ODA LİNKİ:</label>
+                        <input type="text" id="share-link" readonly onclick="this.select()">
+                    </div>
+                    <button id="btn-start-game" class="btn-start hidden" onclick="net.startGameHost()">BAŞLAT</button>
+                </div>
+
+                <div class="team-panel team-b">
+                    <h2>KIRMIZI TAKIM</h2>
+                    <div class="role-slots">
+                        <div class="slot-group">
+                            <h3>ANLATICI</h3>
+                            <div id="lobby-narrator-b" class="player-list"></div>
+                            <button class="btn-slot" onclick="net.selectRole('B', 'narrator')">GEÇ</button>
+                        </div>
+                        <div class="slot-group">
+                            <h3>DİNLEYİCİLER</h3>
+                            <div id="lobby-listeners-b" class="player-list"></div>
+                            <div class="leader-controls">
+                                <button class="btn-slot" onclick="net.selectRole('B', 'listener')">GEÇ</button>
+                                <button class="btn-leader" onclick="net.claimLeader('B')">LİDER OL</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-narrator" class="screen">
+            <div class="game-header">
+                <div id="current-logo-narrator" class="team-logo-small"></div>
+                <div class="timer" id="timer-narrator">60</div>
+            </div>
+            <div class="card-layout">
+                <div class="card-main-word" id="narrator-main-word">KELİME</div>
+                <div class="card-forbidden-words" id="narrator-forbidden-list">
+                    </div>
+            </div>
+            <div class="game-controls">
+                <button class="btn-wrong" onclick="engine.handleWrong()">TABU!</button>
+                <button class="btn-pass" onclick="engine.handlePass()">PAS</button>
+                <button class="btn-correct" onclick="engine.handleCorrect()">DOĞRU</button>
+            </div>
+        </section>
+
+        <section id="screen-listener" class="screen">
+            <div class="game-header">
+                <div id="current-logo-listener" class="team-logo-small"></div>
+                <div class="scores">
+                    <span class="score-a">Mavi: 0</span> - <span class="score-b">Kırmızı: 0</span>
+                </div>
+                <div class="timer" id="timer-listener">60</div>
+            </div>
+            <div class="listener-layout">
+                <div id="game-list-a" class="game-player-list side-list"></div>
+                
+                <div class="tahmin-area">
+                    <input type="text" id="tahmin-input" placeholder="TAHMİN YAZ..." readonly>
+                    <p id="listener-msg">Sıra sizde, tahmin et!</p>
+                </div>
+
+                <div id="game-list-b" class="game-player-list side-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="ui-manager.js"></script>
+    <script src="network-core.js"></script>
+    <script src="game-engine.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
